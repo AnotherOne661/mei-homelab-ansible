@@ -1,0 +1,21 @@
+---
+- name: Create homelab user
+  user:
+    name: "{{ homelab_user }}"
+    home: "/home/{{ homelab_user }}"
+    shell: /bin/bash
+    groups:
+      - sudo
+    append: true
+    password: "{{ homelab_user_password }}"
+    create_home: true
+    state: present
+
+- name: Configure sudo access
+  copy:
+    dest: "/etc/sudoers.d/{{ homelab_user }}"
+    content: "{{ homelab_user }} ALL=(ALL:ALL) ALL\n"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"

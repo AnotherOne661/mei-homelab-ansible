@@ -1,0 +1,28 @@
+---
+- name: Create Osiris parent directory
+  ansible.builtin.file:
+    path: "{{ osiris_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Clone Osiris repository
+  ansible.builtin.git:
+    repo: "{{ osiris_repo }}"
+    dest: "{{ osiris_path }}"
+    update: true
+    force: false
+
+- name: Configure Osiris Compose
+  ansible.builtin.template:
+    src: compose.yaml.j2
+    dest: "{{ osiris_path }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start Osiris
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ osiris_path }}"

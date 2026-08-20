@@ -1,0 +1,3 @@
+ansible.cfg
+ssh/*
+roles/pixelmon/files/modpack.tar.gz

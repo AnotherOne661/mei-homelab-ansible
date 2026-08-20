@@ -1,0 +1,34 @@
+---
+- name: Check if Ollama is installed
+  stat:
+    path: /usr/local/bin/ollama
+  register: ollama_binary
+
+- name: Install Ollama
+  shell:
+    cmd: curl -fsSL https://ollama.com/install.sh | sh
+  args:
+    creates: /usr/local/bin/ollama
+  when: not ollama_binary.stat.exists
+
+- name: Enable and start Ollama
+  systemd:
+    name: ollama
+    enabled: true
+    state: started
+
+- name: Wait for Ollama API
+  uri:
+    url: http://127.0.0.1:11434/api/tags
+    method: GET
+    status_code: 200
+  register: ollama_api
+  retries: 10
+  delay: 3
+  until: ollama_api.status == 200
+
+- name: Pull base Ollama model
+  command:
+    cmd: ollama pull "{{ ollama_models }}"
+  register: ollama_model
+  changed_when: "'success' in ollama_model.stdout | lower"

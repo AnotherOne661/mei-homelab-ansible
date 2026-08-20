@@ -1,0 +1,4 @@
+[defaults]
+inventory = inventory/hosts.yml
+private_key_file = ## Add your own
+roles_path = ./roles

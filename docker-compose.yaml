@@ -1,0 +1,20 @@
+services:
+
+  mei:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mei
+    hostname: mei
+    ports:
+      - "2221:22"
+    privileged: true
+    volumes:
+      - ./ssh/id_ed25519.pub:/ssh/id_ed25519.pub:ro
+      - ./docker/entrypoint.sh:/entrypoint.sh:ro
+    entrypoint: ["/entrypoint.sh"]
+    networks:
+      - ansible-lab
+networks:
+  ansible-lab:
+    name: ansible-lab

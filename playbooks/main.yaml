@@ -1,0 +1,12 @@
+---
+- name: Provision homelab server
+  hosts: all
+  become: true
+
+  roles:
+    - base
+    - user
+    - ollama
+    - osiris
+    - pixelmon
+    - nomad

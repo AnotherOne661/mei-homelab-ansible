@@ -1,0 +1,39 @@
+---
+- name: Create Osiris parent directory
+  file:
+    path: "{{ osiris_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Clone Osiris repository
+  git:
+    repo: "{{ osiris_repo }}"
+    dest: "{{ osiris_path }}"
+    update: true
+    force: false
+  become: true
+
+- name: Set Osiris directory ownership
+  file:
+    path: "{{ osiris_path }}"
+    state: directory
+    owner: root
+    group: root
+    recurse: true
+
+- name: Configure Osiris Compose
+  template:
+    src: compose.yaml.j2
+    dest: "{{ osiris_path }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start Osiris
+  command:
+    cmd: docker compose up -d
+    chdir: "{{ osiris_path }}"
+  ignore_errors: true # This is just because I test with DiD, production should delete this line
+  no_log: true # Again, this MUST be removed in production

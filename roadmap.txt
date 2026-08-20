@@ -1,0 +1,12 @@
+creates a sudo user called another
+creates a home folder for it
+https://github.com/simplifaisoul/osiris.git at /home/user/OSINT/OSIRIS
+https://github.com/odysseus-dev/odysseus.git at /home/user/AI/odysseus
+https://github.com/Crosstalk-Solutions/project-nomad.git at /home/user/lifestyle/NOMAD
+https://kyutai.org/blog/2026-01-13-pocket-tts/ at /home/another/AI/pocket-tts
+https://hermes-agent.nousresearch.com/docs/skills/ at /home/another/AI/hermes
+https://github.com/openclaw/openclaw.git at /home/another/AI/openclaw
+my pixelmon server at /home/user/minecraft/pixelmon
+my cronjob task 0 2 * * * tar -czf /home/user/minecraft/pixelmon/data_$(date +\%F).tar.gz -C /home/user/minecraft/pixelmon data
+ollama 
+

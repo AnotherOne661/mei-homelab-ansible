@@ -1,0 +1,92 @@
+---
+- name: Update APT package cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Upgrade installed packages
+  apt:
+    upgrade: dist
+
+- name: Install base packages
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - wget
+      - git
+      - sudo
+      - python3
+      - python3-pip
+      - python3-venv
+      - gnupg
+      - unzip
+      - tar
+      - gzip
+      - vim
+      - nano
+      - htop
+      - zstd
+    state: present
+
+- name: Install Debian-specific packages
+  apt:
+    name:
+      - python3-debian
+    state: present
+  when: ansible_facts.os_family == "Debian"
+
+- name: Set Docker distribution
+  set_fact:
+    docker_distribution: >-
+      {{ 'ubuntu' if ansible_facts.distribution == 'Ubuntu' else 'debian' }}
+
+- name: Create Docker keyring directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Docker GPG key
+  get_url:
+    url: "https://download.docker.com/linux/{{ docker_distribution }}/gpg"
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+
+- name: Add Docker APT repository
+  deb822_repository:
+    name: docker
+    types: deb
+    uris: "https://download.docker.com/linux/{{ docker_distribution }}"
+    suites: "{{ ansible_facts.distribution_release }}"
+    components:
+      - stable
+    signed_by: /etc/apt/keyrings/docker.asc
+    state: present
+    enabled: true
+
+- name: Update APT cache after adding Docker repository
+  apt:
+    update_cache: true
+
+- name: Install Docker Engine
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+- name: Add homelab user to Docker group
+  user:
+    name: "{{ homelab_user }}"
+    groups: docker
+    append: true
+
+- name: Enable and start Docker
+  systemd:
+    name: docker
+    enabled: true
+    state: started

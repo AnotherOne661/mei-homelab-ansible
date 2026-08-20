@@ -1,0 +1,55 @@
+---
+- name: Create Pixelmon directory
+  file:
+    path: "{{ pixelmon_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create Pixelmon data directory
+  file:
+    path: "{{ pixelmon_path }}/data"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create Pixelmon mods directory
+  file:
+    path: "{{ pixelmon_path }}/data/mods"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy Pixelmon modpack archive
+  copy:
+    src: modpack.tar.gz
+    dest: "{{ pixelmon_path }}/modpack.tar.gz"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Extract Pixelmon modpack
+  unarchive:
+    src: "{{ pixelmon_path }}/modpack.tar.gz"
+    dest: "{{ pixelmon_path }}/data/mods"
+    remote_src: true
+    owner: root
+    group: root
+
+- name: Configure Pixelmon Docker Compose
+  template:
+    src: compose.yaml.j2
+    dest: "{{ pixelmon_path }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start Pixelmon server
+  command:
+    cmd: docker compose up -d
+    chdir: "{{ pixelmon_path }}"
+  ignore_errors: true # As with Osiris, this is a problem of DiD, remove in production
+  no_log: true # Once again, remove in prod

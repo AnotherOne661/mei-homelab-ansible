@@ -1,0 +1,47 @@
+---
+- name: Create Project NOMAD base directory
+  ansible.builtin.file:
+    path: /opt/project-nomad
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create NOMAD persistent storage directory
+  ansible.builtin.file:
+    path: /mnt/stg-1/NOMAD/storage
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create NOMAD MySQL data directory
+  ansible.builtin.file:
+    path: /mnt/stg-1/NOMAD/mysql
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create NOMAD Redis data directory
+  ansible.builtin.file:
+    path: /mnt/stg-1/NOMAD/redis
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure Project NOMAD Compose
+  ansible.builtin.template:
+    src: compose.yaml.j2
+    dest: /opt/project-nomad/compose.yaml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start Project NOMAD
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: /opt/project-nomad
+  no_log: true # Again, remove this in production
+  ignore_errors: true # Same for this

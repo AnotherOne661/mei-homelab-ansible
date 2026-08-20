@@ -1,0 +1,18 @@
+services:
+  mc-pixelmon:
+    image: itzg/minecraft-server:java21
+    container_name: mc-pixelmon
+
+    network_mode: host
+
+    environment:
+      EULA: "TRUE"
+      TYPE: "NEOFORGE"
+      NEOFORGE_VERSION: "21.1.233"
+      MEMORY: "{{ pixelmon_memory }}"
+      OPS: "{{ pixelmon_op }}"
+
+    volumes:
+      - "{{ pixelmon_path }}/data:/data"
+
+    restart: unless-stopped
